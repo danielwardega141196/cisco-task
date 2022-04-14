@@ -36,4 +36,5 @@ def ping():
     # send the request to the url specified in payload
     url_request = requests.get('http://www.google.com/nothere')
 
+    # prepare correct response and return it
     return _prepare_ping_endpoint_response(r=url_request)
