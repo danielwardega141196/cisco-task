@@ -1,44 +1,39 @@
-"""The Endpoints to manage the BOOK_REQUESTS"""
-import uuid
-from datetime import datetime, timedelta
-from flask import jsonify, abort, request, Blueprint
+import http.client
+
+from flask import request as flask_request, Blueprint
+
+from routes.constants import INFO_RESPONSE
+from routes.helpers import _get_payload_error_response, _prepare_ping_endpoint_response
+import requests
+
 
 API = Blueprint('api', __name__)
 
 
-
 @API.route('/info', methods=['GET'])
-def get_records():
-    """Return all book requests
-    @return: 200: an array of all known BOOK_REQUESTS as a \
-    flask/response object with application/json mimetype.
+def info():
     """
-    return jsonify({})
+        GET 'info' endpoint which always should return constant
+        value of INFO_RESPONSE with the HTTP 200 OK success status
+    """
+    return INFO_RESPONSE, http.client.OK
 
 
 @API.route('/ping', methods=['POST'])
 def ping():
-    """Create a book request record
-    @param email: post : the requesters email address
-    @param title: post : the title of the book requested
-    @return: 201: a new_uuid as a flask/response object \
-    with application/json mimetype.
-    @raise 400: misunderstood request
     """
-    if not request.get_json():
-        abort(400)
-    data = request.get_json(force=True)
+        POST 'ping' endpoint which ping url specified in payload
+    """
 
-    if not data.get('email'):
-        abort(400)
-    if not data.get('title'):
-        abort(400)
+    # Get Payload from the request
+    payload = flask_request.form
 
-    new_uuid = str(uuid.uuid4())
-    book_request = {
-        'title': data['title'],
-        'email': data['email'],
-        'timestamp': datetime.now().timestamp()
-    }
-    # HTTP 201 Created
-    return jsonify({"id": new_uuid}), 201
+    # Validate payload and return 4XX code if something is wrong
+    payload_error_response = _get_payload_error_response(payload=payload)
+    if payload_error_response:
+        return payload_error_response
+
+    # send the request to the url specified in payload
+    url_request = requests.get('http://www.google.com/nothere')
+
+    return _prepare_ping_endpoint_response(r=url_request)
