@@ -8,14 +8,14 @@ APP = Flask(__name__)
 
 SWAGGER_URL = '/swagger'
 API_URL = '/static/swagger.json'
-SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+SWAGGER_BLUEPRINT = get_swaggerui_blueprint(
     base_url=SWAGGER_URL,
     api_url=API_URL,
     config={
         'app_name': "Cisco Coding Task"
     }
 )
-APP.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+APP.register_blueprint(SWAGGER_BLUEPRINT, url_prefix=SWAGGER_URL)
 APP.register_blueprint(API)
 
 
