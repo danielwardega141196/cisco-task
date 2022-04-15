@@ -5,6 +5,19 @@ import requests
 import routes.helpers as routes_helpers
 
 
+@patch.object(routes_helpers, "create_note_schema")
+def test_get_payload_error_response_without_error(create_note_schema):
+
+    # mock validation function
+    create_note_schema.validate = MagicMock(return_value=False)
+
+    payload = {}
+
+    # check results
+    assert routes_helpers._get_payload_error_response(payload=payload) is None
+    create_note_schema.validate.assert_called_once_with(payload)
+
+
 def test_prepare_ping_endpoint_response_with_error():
 
     # prepare custom request
@@ -34,24 +47,4 @@ def test_prepare_ping_endpoint_response_without_error():
     assert result == expected_result
     r.raise_for_status.assert_called_once()
     r.json.assert_called_once()
-
-
-@patch.object(routes_helpers, "create_note_schema")
-def test_get_payload_error_response_without_error(create_note_schema):
-
-    # mock validation function
-    create_note_schema.validate = MagicMock(return_value=False)
-
-    payload = {}
-
-    # check results
-    assert routes_helpers._get_payload_error_response(payload=payload) is None
-    create_note_schema.validate.assert_called_once_with(payload)
-
-
-@patch.object(routes_helpers, "create_note_schema")
-def test_get_payload_error_response_with_error(create_note_schema):
-
-    # mock validation function
-    create_note_schema.validate = MagicMock(return_value=True)
 
