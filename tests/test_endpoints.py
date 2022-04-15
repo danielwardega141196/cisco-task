@@ -23,7 +23,7 @@ def test_ping(
 ):
 
     example_url_data = {'url': 'example'}
-    flask_request.form = example_url_data
+    flask_request.get_json = MagicMock(return_value=example_url_data)
 
     payload_error_response.return_value = False
 
@@ -35,8 +35,7 @@ def test_ping(
     routes_api.ping()
 
     # check if specified functions has been run with specified parameters
+    flask_request.get_json.assert_called_once()
     payload_error_response.assert_called_once_with(payload=example_url_data)
     requests_library_get.assert_called_once_with(example_url_data['url'])
     prepare_ping_endpoint_response.assert_called_once_with(r=requests_library_get_return_value)
-
-
