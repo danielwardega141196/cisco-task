@@ -25,7 +25,7 @@ def ping():
     """
 
     # get payload from the request
-    payload = flask_request.form
+    payload = flask_request.get_json()
 
     # validate payload and return 4XX code if something is wrong
     payload_error_response = _get_payload_error_response(payload=payload)
